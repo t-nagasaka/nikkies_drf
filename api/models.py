@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin
 )
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
 
 
@@ -94,15 +95,27 @@ class Pages(models.Model):
     user_page = models.ForeignKey(settings.AUTH_USER_MODEL,
                                   related_name='user_page',
                                   on_delete=models.CASCADE)
-    history01_display_date = models.ForeignKey('Diaries',
-                                               related_name='history01_display_date',
-                                               on_delete=models.CASCADE)
-    history02_display_date = models.ForeignKey('Diaries',
-                                               related_name='history02_display_date',
-                                               on_delete=models.CASCADE)
-    history03_display_date = models.ForeignKey('Diaries',
-                                               related_name='history03_display_date',
-                                               on_delete=models.CASCADE)
+    history01_display_date = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(366)]
+    )
+    history02_display_date = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(366)]
+    )
+    history03_display_date = models.IntegerField(
+        blank=True,
+        null=True,
+        default=0,
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(366)]
+    )
 
     class Meta:
         db_table = 'pages'
