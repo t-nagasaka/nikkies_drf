@@ -30,16 +30,20 @@ class UserManager(BaseUserManager):
     def create_user(self, username, password=None):
         user = self.model(username=username)
         user.set_password(password)
-        user.save(useing=self._db)
+        user.save(using=self._db)
         # ユーザー名とパスワードを設定したユーザーモデルを返却
         return user
 
-    # カスタムユーザー作成時はスーパーユーザーも作成
-    def cerate_superuser(self, username, password=None):
-        user = self.model(username=username)
+    # ユーザーマネージャをカスタムした場合はsuperuserも設定する必要がある
+    # usernameからemailへ変更
+    def create_superuser(self, username, password=None):
+        user = self.model(
+            username=username,
+        )
         user.set_password(password)
         user.is_staff = True
         user.is_active = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
@@ -49,7 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     img = models.ImageField(blank=True, null=True, upload_to=upload_avatar_path)
-    create_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     # UserManagerをネストする
@@ -74,7 +78,7 @@ class Diaries(models.Model):
     picture_03 = models.ImageField(blank=True, null=True, upload_to=upload_post_path)
     picture_04 = models.ImageField(blank=True, null=True, upload_to=upload_post_path)
     picture_05 = models.ImageField(blank=True, null=True, upload_to=upload_post_path)
-    create_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
