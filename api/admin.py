@@ -33,5 +33,5 @@ class UserAdmin(BaseUserAdmin):
 
 # 管理者画面で表示するモデルの指定
 admin.site.register(models.User, UserAdmin)
-admin.site.register(models.Diaries)
-admin.site.register(models.Pages)
+admin.site.register(models.Diary)
+admin.site.register(models.Page)

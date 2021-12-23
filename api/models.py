@@ -1,3 +1,5 @@
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin
@@ -67,12 +69,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class Diaries(models.Model):
+class Diary(models.Model):
     user_diary = models.ForeignKey(settings.AUTH_USER_MODEL,
                                    related_name='user_diary',
                                    on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
-    text = models.TextField()
+    title = models.TextField(blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
     display_date = models.DateField()
     picture_01 = models.ImageField(blank=True, null=True, upload_to=upload_post_path)
     picture_02 = models.ImageField(blank=True, null=True, upload_to=upload_post_path)
@@ -91,27 +93,22 @@ class Diaries(models.Model):
         return f'{str(self.display_date)} {self.title}'
 
 
-class Pages(models.Model):
-    user_page = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                  related_name='user_page',
-                                  on_delete=models.CASCADE)
+class Page(models.Model):
+    user_page = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                     primary_key=True,
+                                     related_name='user_page',
+                                     on_delete=models.CASCADE)
     history01_display_date = models.IntegerField(
-        blank=True,
-        null=True,
         default=0,
         validators=[MinValueValidator(0),
                     MaxValueValidator(366)]
     )
     history02_display_date = models.IntegerField(
-        blank=True,
-        null=True,
         default=0,
         validators=[MinValueValidator(0),
                     MaxValueValidator(366)]
     )
     history03_display_date = models.IntegerField(
-        blank=True,
-        null=True,
         default=0,
         validators=[MinValueValidator(0),
                     MaxValueValidator(366)]
@@ -120,3 +117,10 @@ class Pages(models.Model):
     class Meta:
         db_table = 'pages'
         verbose_name_plural = 'ページ'
+
+
+@receiver(post_save, sender=User)
+def create_profile(sender, **kwargs):
+    """ 新ユーザー作成時に空のprofileも作成する """
+    if kwargs['created']:
+        Page.objects.get_or_create(user_page=kwargs['instance'])

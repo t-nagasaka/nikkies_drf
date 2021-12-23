@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/', include('api.urls')),
     # authen/jwt/create/でJWTのトークンを発行する
     path('authen/', include('djoser.urls.jwt')),
+    path('user/', include('djoser.urls')),
 ]
 
 # settings.pyに追加したMEDIA_URLとMEDIA_ROOTから画像へのルートを指定
