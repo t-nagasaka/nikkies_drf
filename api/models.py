@@ -121,6 +121,6 @@ class Page(models.Model):
 
 @receiver(post_save, sender=User)
 def create_profile(sender, **kwargs):
-    """ 新ユーザー作成時に空のprofileも作成する """
+    """ 新ユーザー作成時に空のdiaryも作成する """
     if kwargs['created']:
         Page.objects.get_or_create(user_page=kwargs['instance'])

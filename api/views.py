@@ -75,6 +75,5 @@ class PageViewSet(viewsets.ModelViewSet):
 
     # オーバーライドメソッド
     def perform_create(self, serializer):
-        print(serializer)
         # ログインしているユーザーの情報を取得して保存
         serializer.save(user_page=self.request.user)
