@@ -1,20 +1,28 @@
 from pathlib import Path
 from datetime import timedelta
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+env.read_env(BASE_DIR.joinpath('.env'))
+
+try:
+    SECRET_KEY = env('SECRET_KEY')
+except ImportError:
+    pass
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@z@j9ghp*_qp%f^7(whbw!2canv4)jcj*=br-d+58e8x^y)tw9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
 # Application definition
@@ -46,9 +54,7 @@ MIDDLEWARE = [
 ]
 
 # Reactからのアクセス
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000'
-]
+CORS_ORIGIN_WHITELIST = env.list('CORS_ORIGIN_WHITELIST')
 
 ROOT_URLCONF = 'nikkies_api.urls'
 
@@ -73,6 +79,11 @@ WSGI_APPLICATION = 'nikkies_api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+# DATABASES = {
+#     'default': env.db(),
+# }
+
 
 DATABASES = {
     'default': {
